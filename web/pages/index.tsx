@@ -1,19 +1,15 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { IconButton, InputAdornment } from "@mui/material";
+import { IconButton, ImageListItem, InputAdornment } from "@mui/material";
 
-import { Container, TextField, Button } from "@mui/material";
+import { TextField, Button, ImageList, Box } from "@mui/material";
 
 import Grid from "@mui/material/Grid2";
 import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
 import axios from "axios";
-
-interface Image {
-    img: string;
-    title: string;
-}
+import Image from "@/types/image";
 
 export default function Home() {
     const [searchText, setSearchText] = useState<string>("");
@@ -22,115 +18,153 @@ export default function Home() {
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
-        const img: Image = {
-            img: "https://sircle.id.vn/memes/images/2f5a4ba3187fc1562000b9ef67987eaf.png?&fit=cover",
-            title: "test"
-        };
-        setImageList((prevImageList: Image[]) => [...prevImageList, img]);
         const response = await axios.get("/memes/api/search", {
             params: {
-                text: searchText
-            }
+                text: searchText,
+            },
         });
-        console.log(response.data);
+        setImageList(response.data);
     };
 
     const handleHomeClick = () => {
         setImageList([]);
         setSearchText("");
         router.push("/");
-    }
+    };
 
-    return (
-        <Container>
-            {imageList.length <= 0 ? (
-                <Grid
-                    container
-                    spacing={3}
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="center"
-                    style={{ minHeight: "100vh", minWidth: "100%" }}
-                >
-                    <Grid size={12} sx={{ width: "50%" }}>
-                        <form noValidate autoComplete="off" style={{ display: "flex", flexDirection: "column", alignItems: "center" }} onSubmit={(e) => handleSubmit(e)}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                variant="outlined"
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                slotProps={{
-                                    input: {
-                                        startAdornment: (
-                                            <InputAdornment position="start">
+    return imageList.length <= 0 ? (
+        <Box
+            sx={{
+                backgroundImage: "url('memes/background-75.png')",
+                backgroundSize: "cover",
+            }}
+        >
+            <Grid
+                container
+                spacing={3}
+                direction="column"
+                alignItems="center"
+                justifyContent="center"
+                sx={{
+                    minHeight: "100vh",
+                    minWidth: "100%",
+                }}
+            >
+                <Grid size={12} sx={{ width: "50%" }}>
+                    <form
+                        noValidate
+                        autoComplete="off"
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                        }}
+                        onSubmit={(e) => handleSubmit(e)}
+                    >
+                        <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            variant="outlined"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon />
+                                        </InputAdornment>
+                                    ),
+                                },
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "30px",
+                                },
+                                backgroundColor: "white",
+                                borderRadius: "30px",
+                                boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.75)",
+                            }}
+                        />
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            style={{ marginTop: "20px", width: "30%" }}
+                        >
+                            Search
+                        </Button>
+                    </form>
+                </Grid>
+            </Grid>
+        </Box>
+    ) : (
+        <Box
+            sx={{
+                backgroundImage: "url('memes/background-40.png')",
+                backgroundSize: "cover",
+                paddingTop: "8px",
+            }}
+        >
+            <Grid
+                container
+                spacing={3}
+                direction="column"
+                alignItems="center"
+                justifyContent="flex-start"
+                sx={{ minWidth: "100%" }}
+            >
+                <Grid size={12} sx={{ width: "35%" }}>
+                    <form
+                        noValidate
+                        autoComplete="off"
+                        onSubmit={(e) => handleSubmit(e)}
+                    >
+                        <TextField
+                            fullWidth
+                            id="outlined-basic"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            variant="outlined"
+                            slotProps={{
+                                input: {
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <IconButton
+                                                onClick={handleHomeClick}
+                                            >
+                                                <HomeIcon />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            <IconButton type="submit">
                                                 <SearchIcon />
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                sx={{ 
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "30px",
-                                    }
-                                 }}
-                            />
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                type="submit"
-                                style={{ marginTop: "20px", width: "30%" }}
-                            >
-                                Search
-                            </Button>
-                        </form>
-                    </Grid>
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                },
+                            }}
+                            sx={{
+                                "& .MuiOutlinedInput-root": {
+                                    borderRadius: "30px",
+                                },
+                            }}
+                        />
+                    </form>
                 </Grid>
-            ) : (
-                <Grid
-                    container
-                    spacing={3}
-                    direction="column"
-                    alignItems="center"
-                    justifyContent="flex-start"
-                    style={{ minHeight: "100vh", minWidth: "100%" }}
-                >
-                    <Grid size={12} sx={{ width: "50%" }}>
-                        <form noValidate autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
-                            <TextField
-                                fullWidth
-                                id="outlined-basic"
-                                value={searchText}
-                                onChange={(e) => setSearchText(e.target.value)}
-                                variant="outlined"
-                                slotProps={{
-                                    input:{
-                                        startAdornment: (
-                                            <InputAdornment position="start">
-                                                <IconButton onClick={handleHomeClick}>
-                                                    <HomeIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        ),
-                                        endAdornment: (
-                                            <InputAdornment position="end">
-                                                <IconButton type="submit">
-                                                    <SearchIcon />
-                                                </IconButton>
-                                            </InputAdornment>
-                                        )
-                                    }
-                                }}
-                                sx={{ 
-                                    "& .MuiOutlinedInput-root": {
-                                        borderRadius: "30px",
-                                    }
-                                 }}
-                            />
-                        </form>
-                    </Grid>
-                </Grid>
-            )}
-        </Container>
+            </Grid>
+            <ImageList cols={6} gap={16} sx={{ width: "100%", paddingBottom: "8px" }}>
+                {imageList.map((image: Image, index: number) => (
+                    <ImageListItem key={index}>
+                        <img
+                            key={index}
+                            src={`${image.img}?&fit=cover`}
+                            alt={image.title}
+                        />
+                    </ImageListItem>
+                ))}
+            </ImageList>
+        </Box>
     );
 }
