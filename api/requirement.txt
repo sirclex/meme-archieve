@@ -1,0 +1,4 @@
+faiss-cpu
+pillow
+sentence-transformers
+fastapi[standard]
