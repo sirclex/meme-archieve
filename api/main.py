@@ -18,4 +18,4 @@ def hello():
 
 @app.get("/search")
 def search(text):
-    return search_text(text, faiss_index, encoding_model, list(dataset.values()), dataset)
+    return search_text(text, faiss_index, encoding_model, list(dataset.values()), dataset, k=int(os.getenv("RESULT_PER_PAGE")))
