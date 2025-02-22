@@ -1,19 +1,32 @@
 "use client";
+import axios from "axios";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { IconButton, ImageListItem, InputAdornment } from "@mui/material";
 
-import { TextField, Button, ImageList, Box } from "@mui/material";
-
+import {
+    Box,
+    TextField,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button,
+    IconButton,
+    ImageList,
+    ImageListItem,
+    InputAdornment,
+} from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import SearchIcon from "@mui/icons-material/Search";
 import HomeIcon from "@mui/icons-material/Home";
-import axios from "axios";
+
 import Image from "@/types/image";
 
 export default function Home() {
     const [searchText, setSearchText] = useState<string>("");
     const [imageList, setImageList] = useState<Image[]>([]);
+    const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+    const [selectedImage, setSelectedImage] = useState<Image | null>(null);
     const router = useRouter();
 
     const handleSubmit = async (event: React.FormEvent) => {
@@ -24,6 +37,15 @@ export default function Home() {
             },
         });
         setImageList(response.data);
+    };
+
+    const handleImageClick = (image: Image) => {
+        setSelectedImage(image);
+        setDialogOpen(true);
+    };
+
+    const handleDialogClose = () => {
+        setDialogOpen(false);
     };
 
     const handleHomeClick = () => {
@@ -154,17 +176,40 @@ export default function Home() {
                     </form>
                 </Grid>
             </Grid>
-            <ImageList cols={6} gap={16} sx={{ width: "100%", paddingBottom: "8px" }}>
+            <ImageList
+                cols={6}
+                gap={16}
+                sx={{ width: "100%", paddingBottom: "8px" }}
+            >
                 {imageList.map((image: Image, index: number) => (
                     <ImageListItem key={index}>
                         <img
                             key={index}
                             src={`${image.img}?&fit=cover`}
                             alt={image.title}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleImageClick(image)}
                         />
                     </ImageListItem>
                 ))}
             </ImageList>
+            <Dialog
+                open={dialogOpen}
+                onClose={handleDialogClose}
+                disableScrollLock
+            >
+                <DialogTitle>{selectedImage?.title}</DialogTitle>
+                <DialogContent>
+                    <img
+                        src={selectedImage?.img}
+                        alt={selectedImage?.title}
+                        style={{ width: "100%" }}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleDialogClose}>Close</Button>
+                </DialogActions>
+            </Dialog>
         </Box>
     );
 }
