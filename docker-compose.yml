@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      context: api
+      dockerfile: Dockerfile
+    container_name: meme-archieve-api
+
+  web:
+    build:
+      context: web
+      dockerfile: Dockerfile
+    container_name: meme-archieve
+    environment:
+      - API_URL=http://api:3031/search
+    ports:
+      - "3030:3030"
+    depends_on:
+      - api
