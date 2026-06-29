@@ -5,10 +5,17 @@ from sentence_transformers import SentenceTransformer
 def init(encoding_model=None, dataset_json=None):
     model = SentenceTransformer(encoding_model)
 
-    data_json = open(dataset_json, "r")
-    dataset = json.load(data_json)
+    with open(dataset_json, "r", encoding="utf-8") as data_json:
+        dataset = json.load(data_json)
 
-    texts = list(dataset.values())
+    search_items = [
+        {
+            "img": f"images/{key}",
+            "title": value
+        }
+        for key, value in dataset.items()
+    ]
+    texts = [item["title"] for item in search_items]
 
     embeddings = model.encode(texts)
 
@@ -16,21 +23,16 @@ def init(encoding_model=None, dataset_json=None):
     index = faiss.IndexFlatL2(dimension)
     index.add(embeddings)
 
-    return index, model, dataset
+    return index, model, search_items
 
-def search_text(query_text, index, model, texts, dataset, k=15):
+def search_text(query_text, index, model, search_items, offset=0, limit=15):
+    item_count = len(search_items)
+
+    if limit <= 0 or offset < 0 or offset >= item_count:
+        return []
+
     query_embedding = model.encode([query_text])
-    distances, indices = index.search(query_embedding, k)
-    similar_texts = [texts[idx] for idx in indices[0]]
+    result_count = min(item_count, offset + limit)
+    _, indices = index.search(query_embedding, result_count)
 
-    image_paths = []
-
-    for key, value in dataset.items():
-        if (value in similar_texts):
-            img_item = {
-                "img": f"images/{key}",
-                "title": value
-            }
-            image_paths.append(img_item)
-
-    return image_paths
+    return [search_items[idx] for idx in indices[0][offset : offset + limit]]
