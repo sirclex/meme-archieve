@@ -31,7 +31,7 @@ export default async function handler(
 
     const items: Image[] = response.status === 200
         ? response.data.items.map((item) => ({
-            img: `memes/${item.img}`,
+            img: `${item.img}`,
             title: item.title,
         }))
         : [];
