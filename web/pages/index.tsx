@@ -72,7 +72,7 @@ export default function Home() {
         setIsLoading(true);
 
         try {
-            const response = await axios.get<SearchResponse>("/memes/api/search", {
+            const response = await axios.get<SearchResponse>("/api/search", {
                 params: {
                     text: trimmedQuery,
                     offset,
@@ -165,7 +165,7 @@ export default function Home() {
         return () => {
             observer.disconnect();
         };
-    }, []);
+    }, [imageList.length]);
 
     useEffect(() => {
         return () => {
@@ -176,7 +176,7 @@ export default function Home() {
     return imageList.length <= 0 ? (
         <Box
             sx={{
-                backgroundImage: "url('memes/background-75.png')",
+                backgroundImage: "url('background-75.png')",
                 backgroundSize: "cover",
             }}
         >
@@ -241,7 +241,7 @@ export default function Home() {
     ) : (
         <Box
             sx={{
-                backgroundImage: "url('memes/background-40.png')",
+                backgroundImage: "url('background-40.png')",
                 backgroundSize: "cover",
                 paddingTop: "8px",
             }}
